@@ -1,7 +1,7 @@
 # DNSAddendumAgnostic
 Microsoft.Windows.Server.DNS.Monitoring.Addendum - Management pack provides multiple capabilities, including: count logic monitors, daily summary report, alert closure/service/WMIvalidation recovery automation, and synthetic nslookup monitors.
 
-Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.3.6
+Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.3.7
 
 Download here
 
@@ -11,6 +11,7 @@ ADI count logic monitors, daily summary report alerts of DNS alerts, daily alert
 https://kevinjustin.com/blog/2023/08/23/dns-addendum-pack/
 
 Version History:
+v1.0.3.7  20 Sep 2023 - Updated for generic import, Discovery and Override GUIDs
 v1.0.3.6  18 Jul 2023 - Updated alert severity
 v1.0.3.5  27 Jun 2023 - ADI DNS count monitors for 3152,7616
 v1.0.3.4  13 Jun 2023 - Additional overrides to disable rules, added count logic monitors on DNS events, reports to informational
