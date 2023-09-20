@@ -1734,7 +1734,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
                     </HostProperty>
                   </ValueExpression>
                   <Operator>MatchesRegularExpression</Operator>
-                  <Pattern>(?i)DC0</Pattern>
+                  <Pattern>(?i)##DNSServerRegEx##</Pattern>
                 </RegExExpression>
               </Expression>
             </MembershipRule>
@@ -1762,7 +1762,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
                     </HostProperty>
                   </ValueExpression>
                   <Operator>MatchesRegularExpression</Operator>
-                  <Pattern>(?i)DC0</Pattern>
+                  <Pattern>(?i)##DNSServerRegEx##</Pattern>
                 </RegExExpression>
               </Expression>
             </MembershipRule>
@@ -1790,7 +1790,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
                     </HostProperty>
                   </ValueExpression>
                   <Operator>MatchesRegularExpression</Operator>
-                  <Pattern>(?i)DC0</Pattern>
+                  <Pattern>(?i)##DNSServerRegEx##</Pattern>
                 </RegExExpression>
               </Expression>
             </MembershipRule>
@@ -1818,7 +1818,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
                     </HostProperty>
                   </ValueExpression>
                   <Operator>MatchesRegularExpression</Operator>
-                  <Pattern>(?i)DC0</Pattern>
+                  <Pattern>(?i)##DNSServerRegEx##</Pattern>
                 </RegExExpression>
               </Expression>
             </MembershipRule>
