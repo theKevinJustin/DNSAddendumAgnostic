@@ -1,11 +1,11 @@
 # DNSAddendumAgnostic - Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.3.7
 
-Download here
+Download [here](https://github.com/theKevinJustin/DNSAddendumAgnostic/blob/main/Microsoft.Windows.Server.DNS.Monitoring.Addendum.xml)
 
 ### Microsoft.Windows.Server.DNS.Monitoring.Addendum
 Microsoft.Windows.Server.DNS.Monitoring.Addendum - Management pack provides multiple capabilities, including: count logic monitors, daily summary report, alert closure/service/WMIvalidation recovery automation, and synthetic nslookup monitors.
 
-Additional capabilities include:
+#### Additional capabilities include:
 ADI count logic monitors, daily summary report alerts of DNS alerts, daily alert closure automation, 
 service recovery automation, synthetic internal/external nslookup check scoped to PDC emulators (versus all DNS servers), 
 and WMI validation alert logic changes when Security tools randomly block WMI access.
