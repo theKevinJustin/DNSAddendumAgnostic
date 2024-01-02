@@ -1,4 +1,4 @@
-# DNSAddendumAgnostic - Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.3.8
+# DNSAddendumAgnostic - Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.4.0
 
 Download [here](https://github.com/theKevinJustin/DNSAddendumAgnostic/blob/main/Microsoft.Windows.Server.DNS.Monitoring.Addendum.xml)
 
@@ -14,7 +14,8 @@ Blog [https://kevinjustin.com/blog/2023/08/23/dns-addendum-pack/](https://kevinj
 
 # Version History:
 ```
-v1.0.3.8  27 Dec 2023 - Whitespace audit, ResolutionState changes, performance changes to DS/WA
+v1.0.4.0   4 Jan 2024 - Resolution State logic improvements for large environments
+v1.0.3.9  27 Dec 2023 - Whitespace audit, ResolutionState changes, performance changes to DS/WA
 v1.0.3.7  29 Aug 2023 - Updated for generic import, Discovery and Override GUIDs
 v1.0.3.6  18 Jul 2023 - Updated alert severity
 v1.0.3.5  27 Jun 2023 - ADI DNS count monitors for 3152,7616
