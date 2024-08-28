@@ -2,7 +2,7 @@
   <Manifest>
     <Identity>
       <ID>Microsoft.Windows.Server.DNS.Monitoring.Addendum</ID>
-      <Version>1.0.4.0</Version>
+      <Version>1.0.4.9</Version>
     </Identity>
     <Name>Microsoft Windows Server 2016 DNS Monitoring Addendum</Name>
     <References>
@@ -58,6 +58,7 @@
         <ClassType ID="Windows.DNS.Seed" Accessibility="Public" Abstract="false" Base="Windows!Microsoft.Windows.LocalApplication" Hosted="true" Singleton="false" Extension="false">
           <Property ID="DisplayName" Type="string" AutoIncrement="false" Key="false" CaseSensitive="false" MaxLength="15" MinLength="4" Required="false" Scale="0" />
         </ClassType>
+        <ClassType ID="Windows.DNS.Seed.Scavenging.Class" Accessibility="Public" Abstract="false" Base="Windows.DNS.Seed" Hosted="true" Singleton="false" Extension="false" />
       </ClassTypes>
     </EntityTypes>
     <ModuleTypes>
@@ -86,7 +87,7 @@
                 </Scheduler>
               </DataSource>
               <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1040.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1049.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -100,7 +101,7 @@
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1040.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1049.ps1"
 $EventID = "546"
 #=================================================================================
 
@@ -130,7 +131,7 @@ $bag = $momapi.CreatePropertyBag()
 
 #For a simple example - get files in Windows Temp:
 $date = get-date -uFormat "%Y-%m-%d"
-$Age = [DateTime](Get-Date).AddDays(-7)
+$Age = [DateTime](Get-Date).AddDays(-1)
 
 # Grab past 24 hours
 if ( (get-date).DayOfWeek -ne "Monday" )
@@ -303,7 +304,7 @@ if ( $SCOMCoreReportAlerts.Count -gt 0 )
 						$ActiveMonitor.ID
 						write-host " Resetting Health State on '" + $ActiveMonitor.FullName + "'" 
 						write-host ""
-						$ActiveMonitor.ResetMonitoringState($ActiveMonitor)
+						$ActiveMonitor.ResetMonitoringState($ActiveMonitor.Id)
 						}
 					}
 				}
@@ -369,7 +370,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed. `n Sc
                 </Scheduler>
               </DataSource>
               <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.DataSource.v1040.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.DataSource.v1049.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -383,7 +384,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed. `n Sc
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.DataSource.v1040.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.DataSource.v1049.ps1"
 $EventID = "548"
 #=================================================================================
 
@@ -698,7 +699,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Report Script Completed. `n S
                 </Scheduler>
               </DataSource>
               <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-                <ScriptName>Proactive.DNSAlerts.Synthetic.Monitor.Datasource.v1040.ps1</ScriptName>
+                <ScriptName>Proactive.DNSAlerts.Synthetic.Monitor.Datasource.v1049.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Proactive DNS Synthetic internal/external PowerShell script
@@ -722,7 +723,7 @@ $InternalDNS = "ds.army.mil"
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging.
-$ScriptName = "Proactive.DNSAlerts.Synthetic.Monitor.Datasource.v1040.ps1"
+$ScriptName = "Proactive.DNSAlerts.Synthetic.Monitor.Datasource.v1049.ps1"
 $EventID = "548"
 #=================================================================================
 
@@ -829,7 +830,198 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
         </ModuleImplementation>
         <OutputType>System!System.PropertyBagData</OutputType>
       </DataSourceModuleType>
+      <DataSourceModuleType ID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.DataSource" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element minOccurs="1" type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <WeeklySchedule>
+                    <Windows>
+                      <Daily>
+                        <Start>06:11</Start>
+                        <End>06:21</End>
+                        <DaysOfWeekMask>2</DaysOfWeekMask>
+                      </Daily>
+                    </Windows>
+                  </WeeklySchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.DataSource.v1049.ps1</ScriptName>
+                <ScriptBody>
+#=================================================================================
+#  Script to gather DNS Scavenging alerts report
+#
+#  Author: Kevin Justin
+#  v1.0
+#=================================================================================
 
+
+# Constants section - modify stuff here:
+#=================================================================================
+# Assign script name variable for use in event logging.
+# ScriptName should be the same as the ID of the module that the script is contained in
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.DataSource.v1049.ps1"
+$EventID = "548"
+#=================================================================================
+
+
+# Starting Script section - All scripts get this
+#=================================================================================
+# Gather the start time of the script
+$StartTime = Get-Date
+#Set variable to be used in logging events
+$whoami = whoami
+# Load MOMScript API
+$momapi = New-Object -comObject MOM.ScriptAPI
+#Log script event that we are starting task
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"Script is starting. Running as ($whoami).")
+#=================================================================================
+
+
+# PropertyBag Script section - Monitoring scripts get this
+#=================================================================================
+# Load SCOM PropertyBag function
+$bag = $momapi.CreatePropertyBag()
+#=================================================================================
+
+
+# Begin MAIN script section
+#=================================================================================
+
+#For a simple example - get files in Windows Temp:
+$date = get-date -uFormat "%Y-%m-%d"
+
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"Gather DNS Scavenging Alerts for date ($date).")
+
+
+# Grab past week
+$Time = [DateTime](Get-Date).AddDays(-7)
+
+
+$DNSAlerts = get-scomalert -name "*Scavenging*" | where { $_.TimeRaised -gt $Time }
+$DNSAlerts.Count
+
+
+$DNSMessage = @()
+
+if ( $DNSAlerts.Count -eq 0 )
+	{
+	$DNSMessage += "ZERO DNS Scavenging alerts for the past week ($date)."
+	}
+
+if ( $DNSAlerts.Count -gt 0 )
+	{
+	$DNSMessage += ""
+	
+	# Show DNS alerts by Time Raised,NetBiosComputerName,Message
+	#
+	$DNSMessage += "# DNS Scavenging Alerts for $($date)"
+	$DNSMessage += ""
+	$DNSMessage += "# Count of DNS Scavenging alerts = $($DNSAlerts.Count)"
+	$DNSMessage += "#========================================================"
+	$DNSMessage += ""
+
+	if ( $($DNSAlerts | where { $_.Name -like "*2501*" } ).Count -gt 0 )
+		{
+		$DNSMessage += "DNS Scavenging Alert Event 2501 Details"
+		$DNSMessage += "#========================================================"
+		$DNSMessage +=  $DNSAlerts | where { $_.Name -like "*2501*" } | format-table NetbiosComputerName,TimeRaised,Parameters -auto -wrap
+		$DNSMessage += "#========================================================"
+		}
+
+	if ( $($DNSAlerts | where { $_.Name -like "*2502*" } ).Count -gt 0 )
+		{
+		$DNSMessage += ""
+		$DNSMessage += "DNS Scavenging Alert Event 2502 Details"
+		$DNSMessage += "#========================================================"
+		$DNSMessage +=  $DNSAlerts | where { $_.Name -like "*2502*" } | format-table NetbiosComputerName,TimeRaised,Parameters -auto -wrap
+		$DNSMessage += "#========================================================"
+		}
+
+	if ( $($DNSAlerts | where { $_.Name -like "Proactive DailyTasks DNSAlerts Scavenging Summary*" } ).Count -gt 0 )
+		{
+		$DNSMessage += ""
+		$DNSMessage += "# Weekly Reports alerts run in past week"
+		$DNSMessage += "#========================================================"
+		$DNSMessage += $DNSAlerts | where { $_.Name -like "Proactive DailyTasks DNSAlerts Scavenging Summary*" } | format-table TimeRaised,Parameters -auto -wrap
+		$DNSMessage += "#========================================================"
+		}
+		
+	if ( $($DNSAlerts | where { ( $_.Name -notlike "*2501*" ) -AND ( $_.Name -notlike "*2502*" ) `
+		-AND ( $_.Description -notlike "Proactive DailyTasks DNSAlerts Scavenging Summary*" ) } ).Count -gt 0 )
+		{
+		$DNSMessage += ""
+		$DNSMessage += "# Remaining alerts"
+		$DNSMessage += "#========================================================"
+		$DNSMessage += $($DNSAlerts | where { !( $_.Description -like "*2501*" ) -AND !( $_.Description -like "*2502*" ) `
+		-AND !( $_.Description -notlike "Proactive DailyTasks DNSAlerts Scavenging Summary*" ) } )
+		$DNSMessage += "#========================================================"
+		}
+	$DNSMessage += ""
+	}
+
+$DNSMessage
+
+$DNSMessage = $DNSMessage | out-string
+
+#============================================================
+
+
+  $Result = "GOOD"
+  $Message = "Daily DNS Scavenging alerts report for ($date)"
+
+  $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging Summary Report completed for ($date). `n `n$DNSMessage")
+
+#$bag.AddValue('Result',$Result)
+$bag.AddValue('Count',$Test)
+$bag.AddValue('Message',$Message)
+$bag.AddValue('Summary',$DNSMessage)
+
+
+# Return all bags
+$bag
+
+# Close alerts after building report
+Get-SCOMAlert -name "Proactive DNSAlerts Scavenging Event 2501 Alert" -ResolutionState (0..254) | Resolve-SCOMAlert
+Get-SCOMAlert -name "Proactive DNSAlerts Scavenging Event 2502 Alert" -ResolutionState (0..254) | Resolve-SCOMAlert
+#Get-SCOMAlert -name "Proactive DailyTasks DNSAlerts Scavenging Summary Report Alert" -ResolutionState (0..254) | Resolve-SCOMAlert
+
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging rule cleanup completed for ($date).")
+
+#=================================================================================
+# End MAIN script section
+
+
+# End of script section
+#=================================================================================
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Report Script Completed.  Script Runtime: ($ScriptTime) seconds.")
+#=================================================================================
+# End of script
+                </ScriptBody>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="PA">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
       <WriteActionModuleType ID="Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.WA" Accessibility="Internal" Batching="false">
         <Configuration>
           <xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
@@ -841,7 +1033,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
           <Composite>
             <MemberModules>
               <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.WA.v1040.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.WA.v1049.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -855,7 +1047,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1040.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1049.ps1"
 $EventID = "547"
 #=================================================================================
 
@@ -885,7 +1077,7 @@ $bag = $momapi.CreatePropertyBag()
 
 #For a simple example - get files in Windows Temp:
 $date = get-date -uFormat "%Y-%m-%d"
-$Age = [DateTime](Get-Date).AddDays(-7)
+$Age = [DateTime](Get-Date).AddDays(-1)
 
 # Grab past 24 hours
 if ( (get-date).DayOfWeek -ne "Monday" )
@@ -1058,7 +1250,7 @@ if ( $SCOMCoreReportAlerts.Count -gt 0 )
 						$ActiveMonitor.ID
 						write-host " Resetting Health State on '" + $ActiveMonitor.FullName + "'" 
 						write-host ""
-						$ActiveMonitor.ResetMonitoringState($ActiveMonitor)
+						$ActiveMonitor.ResetMonitoringState($ActiveMonitor.Id)
 						}
 					}
 				}
@@ -1109,7 +1301,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed. `n Sc
           <Composite>
             <MemberModules>
               <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.WA.v1040.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.WA.v1049.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -1123,7 +1315,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed. `n Sc
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.WA.v1040.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.WA.v1049.ps1"
 $EventID = "549"
 #=================================================================================
 
@@ -1408,7 +1600,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Report Script Completed. `n S
           <Composite>
             <MemberModules>
               <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-                <ScriptName>Proactive.DNSAlerts.Synthetic.Monitor.WA.v1040.ps1</ScriptName>
+                <ScriptName>Proactive.DNSAlerts.Synthetic.Monitor.WA.v1049.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Proactive DNS Synthetic internal/external PowerShell script
@@ -1432,7 +1624,7 @@ $InternalDNS = "ds.army.mil"
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging.
-$ScriptName = "Proactive.DNSAlerts.Synthetic.Monitor.WA.v1040.ps1"
+$ScriptName = "Proactive.DNSAlerts.Synthetic.Monitor.WA.v1049.ps1"
 $EventID = "548"
 #=================================================================================
 
@@ -1524,6 +1716,183 @@ $bag
 $EndTime = Get-Date
 $ScriptTime = ($EndTime - $StartTime).TotalSeconds
 $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `n Script Runtime: ($ScriptTime) seconds.")
+#=================================================================================
+# End of script
+                </ScriptBody>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </WriteAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="PSWA" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.BaseData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </WriteActionModuleType>
+      <WriteActionModuleType ID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.WA" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.WA.v1049.ps1</ScriptName>
+                <ScriptBody>
+#=================================================================================
+#  Script to gather DNS alerts and close via on demand task
+#
+#  Author: Kevin Justin
+#  v1.0
+#=================================================================================
+
+
+# Constants section - modify stuff here:
+#=================================================================================
+# Assign script name variable for use in event logging.
+# ScriptName should be the same as the ID of the module that the script is contained in
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.WA.v1049.ps1"
+$EventID = "549"
+#=================================================================================
+
+
+# Starting Script section - All scripts get this
+#=================================================================================
+# Gather the start time of the script
+$StartTime = Get-Date
+#Set variable to be used in logging events
+$whoami = whoami
+# Load MOMScript API
+$momapi = New-Object -comObject MOM.ScriptAPI
+#Log script event that we are starting task
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"Script is starting.  Running as ($whoami).")
+#=================================================================================
+
+
+# PropertyBag Script section - Monitoring scripts get this
+#=================================================================================
+# Load SCOM PropertyBag function
+$bag = $momapi.CreatePropertyBag()
+#=================================================================================
+
+
+# Begin MAIN script section
+#=================================================================================
+
+#For a simple example - get files in Windows Temp:
+$date = get-date -uFormat "%Y-%m-%d"
+
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"Gather DNS Scavenging Alerts for date ($date).")
+
+
+# Grab past week
+$Time = [DateTime](Get-Date).AddDays(-7)
+
+
+$DNSAlerts = get-scomalert -name "*Scavenging*" | where { $_.TimeRaised -gt $Time }
+$DNSAlerts.Count
+
+
+$DNSMessage = @()
+
+if ( $DNSAlerts.Count -eq 0 )
+	{
+	$DNSMessage += "ZERO DNS Scavenging alerts for the past week ($date)."
+	}
+
+if ( $DNSAlerts.Count -gt 0 )
+	{
+	$DNSMessage += ""
+	
+	# Show DNS alerts by Time Raised,NetBiosComputerName,Message
+	#
+	$DNSMessage += "# DNS Scavenging Alerts for $($date)"
+	$DNSMessage += ""
+	$DNSMessage += "# Count of DNS Scavenging alerts = $($DNSAlerts.Count)"
+	$DNSMessage += "#========================================================"
+	$DNSMessage += ""
+
+	if ( $($DNSAlerts | where { $_.Name -like "*2501*" } ).Count -gt 0 )
+		{
+		$DNSMessage += "DNS Scavenging Alert Event 2501 Details"
+		$DNSMessage += "#========================================================"
+		$DNSMessage +=  $DNSAlerts | where { $_.Name -like "*2501*" } | format-table NetbiosComputerName,TimeRaised,Parameters -auto -wrap
+		$DNSMessage += "#========================================================"
+		}
+
+	if ( $($DNSAlerts | where { $_.Name -like "*2502*" } ).Count -gt 0 )
+		{
+		$DNSMessage += ""
+		$DNSMessage += "DNS Scavenging Alert Event 2502 Details"
+		$DNSMessage += "#========================================================"
+		$DNSMessage +=  $DNSAlerts | where { $_.Name -like "*2502*" } | format-table NetbiosComputerName,TimeRaised,Parameters -auto -wrap
+		$DNSMessage += "#========================================================"
+		}
+
+	if ( $($DNSAlerts | where { $_.Name -like "Proactive DailyTasks DNSAlerts Scavenging Summary*" } ).Count -gt 0 )
+		{
+		$DNSMessage += ""
+		$DNSMessage += "# Weekly Reports alerts run in past week"
+		$DNSMessage += "#========================================================"
+		$DNSMessage += $DNSAlerts | where { $_.Name -like "Proactive DailyTasks DNSAlerts Scavenging Summary*" } | format-table TimeRaised,Parameters -auto -wrap
+		$DNSMessage += "#========================================================"
+		}
+		
+	if ( $($DNSAlerts | where { ( $_.Name -notlike "*2501*" ) -AND ( $_.Name -notlike "*2502*" ) `
+		-AND ( $_.Description -notlike "Proactive DailyTasks DNSAlerts Scavenging Summary*" ) } ).Count -gt 0 )
+		{
+		$DNSMessage += ""
+		$DNSMessage += "# Remaining alerts"
+		$DNSMessage += "#========================================================"
+		$DNSMessage += $($DNSAlerts | where { !( $_.Description -like "*2501*" ) -AND !( $_.Description -like "*2502*" ) `
+		-AND !( $_.Description -notlike "Proactive DailyTasks DNSAlerts Scavenging Summary*" ) } )
+		$DNSMessage += "#========================================================"
+		}
+	$DNSMessage += ""
+	}
+
+$DNSMessage
+
+$DNSMessage = $DNSMessage | out-string
+
+#============================================================
+
+
+  $Result = "GOOD"
+  $Message = "Daily DNS Scavenging alerts report for ($date)"
+
+  $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging Summary Report completed for ($date). `n `n$DNSMessage")
+
+#$bag.AddValue('Result',$Result)
+$bag.AddValue('Count',$Test)
+$bag.AddValue('Message',$Message)
+$bag.AddValue('Summary',$DNSMessage)
+
+
+# Return all bags
+$bag
+
+# Close alerts after building report
+Get-SCOMAlert -name "Proactive DNSAlerts Scavenging Event 2501 Alert" -ResolutionState (0..254) | Resolve-SCOMAlert
+Get-SCOMAlert -name "Proactive DNSAlerts Scavenging Event 2502 Alert" -ResolutionState (0..254) | Resolve-SCOMAlert
+#Get-SCOMAlert -name "Proactive DailyTasks DNSAlerts Scavenging Summary Report Alert" -ResolutionState (0..254) | Resolve-SCOMAlert
+
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging rule cleanup completed for ($date).")
+  
+#=================================================================================
+# End MAIN script section
+ 
+  
+# End of script section
+#=================================================================================
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Report Script Completed.  Script Runtime: ($ScriptTime) seconds.")
 #=================================================================================
 # End of script
                 </ScriptBody>
@@ -1828,7 +2197,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
                     </HostProperty>
                   </ValueExpression>
                   <Operator>MatchesRegularExpression</Operator>
-                  <Pattern>(?i)##DNSServerRegEx##</Pattern>
+                  <Pattern>(?i)##DNSServerNamesRegEx##</Pattern>
                 </RegExExpression>
               </Expression>
             </MembershipRule>
@@ -1856,7 +2225,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
                     </HostProperty>
                   </ValueExpression>
                   <Operator>MatchesRegularExpression</Operator>
-                  <Pattern>(?i)##DNSServerRegEx##</Pattern>
+                  <Pattern>(?i)##DNSServerNamesRegEx##</Pattern>
                 </RegExExpression>
               </Expression>
             </MembershipRule>
@@ -1884,7 +2253,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
                     </HostProperty>
                   </ValueExpression>
                   <Operator>MatchesRegularExpression</Operator>
-                  <Pattern>(?i)##DNSServerRegEx##</Pattern>
+                  <Pattern>(?i)##DNSServerNamesRegEx##</Pattern>
                 </RegExExpression>
               </Expression>
             </MembershipRule>
@@ -1912,7 +2281,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
                     </HostProperty>
                   </ValueExpression>
                   <Operator>MatchesRegularExpression</Operator>
-                  <Pattern>(?i)##DNSServerRegEx##</Pattern>
+                  <Pattern>(?i)##DNSServerNamesRegEx##</Pattern>
                 </RegExExpression>
               </Expression>
             </MembershipRule>
@@ -1958,6 +2327,53 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
               <Operator>Equal</Operator>
               <ValueExpression>
                 <Value Type="String">True</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </Expression>
+        </DataSource>
+      </Discovery>
+      <Discovery ID="Windows.DNS.Seed.Scavenging.Class.Discovery" Enabled="true" Target="Windows.DNS.Seed" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="Windows.DNS.Seed.Scavenging.Class" />
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.FilteredRegistryDiscoveryProvider">
+          <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</ComputerName>
+          <RegistryAttributeDefinitions>
+            <RegistryAttributeDefinition>
+              <AttributeName>ScavengingIntervalRegKeyExists</AttributeName>
+              <Path>SYSTEM\CurrentControlSet\Services\DNS\Parameters\ScavengingInterval</Path>
+              <PathType>1</PathType>
+              <!-- 0=regKey 1=regValue -->
+              <AttributeType>0</AttributeType>
+              <!-- 0=CheckIfExists (Boolean) 1=treat data as (String) 2=treat data as (Integer) -->
+            </RegistryAttributeDefinition>
+          </RegistryAttributeDefinitions>
+          <Frequency>86400</Frequency>
+          <ClassId>$MPElement[Name="Windows.DNS.Seed.Scavenging.Class"]$</ClassId>
+          <InstanceSettings>
+            <Settings>
+              <Setting>
+                <Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+                <Value>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Value>
+              </Setting>
+              <Setting>
+                <Name>$MPElement[Name="System!System.Entity"]/DisplayName$</Name>
+                <Value>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Value>
+              </Setting>
+            </Settings>
+          </InstanceSettings>
+          <Expression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="Boolean">Values/ScavengingIntervalRegKeyExists</XPathQuery>
+                <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+              </ValueExpression>
+              <Operator>Equal</Operator>
+              <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
+              <ValueExpression>
+                <Value Type="Boolean">true</Value>
+                <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
               </ValueExpression>
             </SimpleExpression>
           </Expression>
@@ -3183,12 +3599,56 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
           <MatchCount>1</MatchCount>
         </Configuration>
       </UnitMonitor>
+      <UnitMonitor ID="Microsoft.Windows.DNSServer.2016.Event.2502.ScavengingFailed.Monitor" Accessibility="Public" Enabled="true" Target="Windows.DNS.Seed.Scavenging.Class" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.RepeatedEventLogTimer2StateMonitorType" ConfirmDelivery="true">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="Microsoft.Windows.DNSServer.2016.Event.2502.ScavengingFailed.Monitor.AlertMessage">
+          <AlertOnState>Warning</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/Context/DataItem/EventDescription$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="TimerEventRaised" MonitorTypeStateID="TimerEventRaised" HealthState="Success" />
+          <OperationalState ID="RepeatedEventRaised" MonitorTypeStateID="RepeatedEventRaised" HealthState="Warning" />
+        </OperationalStates>
+        <Configuration>
+          <RepeatedComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</RepeatedComputerName>
+          <RepeatedLogName>DNS Server</RepeatedLogName>
+          <RepeatedExpression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+              </ValueExpression>
+              <Operator>Equal</Operator>
+              <ValueExpression>
+                <Value Type="UnsignedInteger">2502</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </RepeatedExpression>
+          <Consolidator>
+            <ConsolidationProperties />
+            <TimeControl>
+              <WithinTimeSchedule>
+                <Interval>600</Interval>
+              </WithinTimeSchedule>
+            </TimeControl>
+            <CountingCondition>
+              <Count>2</Count>
+              <CountMode>OnNewItemTestOutputRestart_OnTimerSlideByOne</CountMode>
+            </CountingCondition>
+          </Consolidator>
+          <TimerWaitInSeconds>1800</TimerWaitInSeconds>
+        </Configuration>
+      </UnitMonitor>
     </Monitors>
     <Recoveries>
       <Recovery ID="Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Recovery" Accessibility="Public" Enabled="true" Target="MWD2!Microsoft.Windows.DNSServer.2016.Server" Monitor="Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor" ResetMonitor="true" ExecuteOnState="Warning" Remotable="true" Timeout="300">
         <Category>Custom</Category>
         <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-          <ScriptName>Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Recovery.v1040.ps1</ScriptName>
+          <ScriptName>Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Recovery.v1041.ps1</ScriptName>
           <ScriptBody>
 #=================================================================================
 #  Script to restart a service
@@ -3209,7 +3669,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging
-$ScriptName = "Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Recovery.v1040.ps1"
+$ScriptName = "Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Recovery.v1041.ps1"
 $EventID = "3750"
 #=================================================================================
 
@@ -3330,7 +3790,7 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
       <Recovery ID="Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery" Accessibility="Public" Enabled="true" Target="MWD2!Microsoft.Windows.DNSServer.2016.Server" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Service.Running" ResetMonitor="true" ExecuteOnState="Error" Remotable="true" Timeout="300">
         <Category>Custom</Category>
         <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-          <ScriptName>Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery.v1040.ps1</ScriptName>
+          <ScriptName>Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery.v1041.ps1</ScriptName>
           <ScriptBody>
 #=================================================================================
 #  Script to restart a service
@@ -3351,7 +3811,7 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging
-$ScriptName = "Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery.v1040.ps1"
+$ScriptName = "Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery.v1041.ps1"
 $EventID = "3750"
 #=================================================================================
 
@@ -3483,121 +3943,118 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Server.Property.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Server.Property.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Server.Property.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Server.Property.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Server.Property.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Server.Property.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.TrustPoint.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.TrustPoint.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.TrustPoint.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.TrustPoint.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.TrustPoint.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.TrustPoint.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Context="Windows.DNS.Forwarder.Conditional.Forward.Root.Domain.Controllers.Group" ContextInstance="31516f6c-e158-259f-9525-b46559698bfd" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Context="Windows.DNS.Forwarder.Conditional.Forward.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Conditional.Forward.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.ClientSubnet.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.ClientSubnet.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.ClientSubnet.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.ClientSubnet.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.ClientSubnet.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.ClientSubnet.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.RecursionScope.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.RecursionScope.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.RecursionScope.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.RecursionScope.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.RecursionScope.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.RecursionScope.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Policy.ServerLevel.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Policy.ServerLevel.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Policy.ServerLevel.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Policy.ServerLevel.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Policy.ServerLevel.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Policy.ServerLevel.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.ZoneScope.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Zone" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.ZoneScope.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.ZoneScope.Discovery" Context="Windows.DNS.Zone.Root.Domain.Controllers.Group" ContextInstance="1a7819c2-1ade-eefe-24bd-eb6a83dc06f0" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.ZoneScope.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.ZoneScope.Discovery" Context="Windows.DNS.Zone.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Zone.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.ZoneScope.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.0to10PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.0to10PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.0to10PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.0to10PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.0to10PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.0to10PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.70to80PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.70to80PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.70to80PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.70to80PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.70to80PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.70to80PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.20to30PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.20to30PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.20to30PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.20to30PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.20to30PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.20to30PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.30to40PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.30to40PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.30to40PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.30to40PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.30to40PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.30to40PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.50to60PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.50to60PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.50to60PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.50to60PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.50to60PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.50to60PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.DNSDomain.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Zone" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.DNSDomain.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.DNSDomain.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.DNSDomain.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.DNSDomain.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.DNSDomain.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.60to70PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.60to70PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.60to70PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.60to70PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.60to70PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.60to70PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.80to90PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.80to90PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.80to90PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.80to90PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.80to90PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.80to90PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.90to100PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.90to100PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.90to100PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.90to100PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.90to100PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.90to100PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.40to50PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.40to50PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.40to50PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.40to50PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.40to50PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.40to50PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.10to20PercentDiscovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.10to20PercentDiscovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.10to20PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.10to20PercentDiscovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.10to20PercentDiscovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Zone.10to20PercentDiscovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
       <DiscoveryPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.WINS.Discovery" Context="MWD2!Microsoft.Windows.DNSServer.2016.Zone" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.WINS.Discovery" Property="Enabled">
         <Value>false</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.WINS.Discovery" Context="Windows.DNS.Zone.Root.Domain.Controllers.Group" ContextInstance="1a7819c2-1ade-eefe-24bd-eb6a83dc06f0" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.WINS.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.WINS.Discovery" Context="Windows.DNS.Zone.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Zone.Root.Domain.Controllers.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.WINS.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Disable.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Context="Windows.DNS.Forwarder.Conditional.Forward.Root.Domain.Controllers.Group" ContextInstance="31516f6c-e158-259f-9525-b46559698bfd" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Property="Enabled">
-        <Value>true</Value>
-      </DiscoveryPropertyOverride>
-      <DiscoveryPropertyOverride ID="Override.Disable.Microsoft.Windows.DNSServer.2016.Server.Property.Discovery" Context="Windows.DNS.Root.Domain.Controllers.Group" ContextInstance="1c71d791-20ba-4157-0f6d-9d4ad52040f7" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Server.Property.Discovery" Property="Enabled">
+      <DiscoveryPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Context="Windows.DNS.Forwarder.Conditional.Forward.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Conditional.Forward.Group.GUID" Enforced="false" Discovery="MWD2!Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery" Property="Enabled">
         <Value>true</Value>
       </DiscoveryPropertyOverride>
 
@@ -3613,6 +4070,7 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
       <MonitorConfigurationOverride ID="Override.Warning.Microsoft.Windows.DNSServer.2016.Monitor.DetectServerQueryOverload.Monitor" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Monitor.DetectServerQueryOverload" Parameter="QPS_THRESHOLD_YELLOW">
         <Value>700000</Value>
       </MonitorConfigurationOverride>
+
       <MonitorPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Monitor.DetectUnusedZone" Context="MWD2!Microsoft.Windows.DNSServer.2016.Zone" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Monitor.DetectUnusedZone" Property="Enabled">
         <Value>false</Value>
       </MonitorPropertyOverride>
@@ -3622,16 +4080,16 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
       <MonitorPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.NSLookup" Context="MWD2!Microsoft.Windows.DNSServer.2016.Zone" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Zone.NSLookup" Property="Enabled">
         <Value>false</Value>
       </MonitorPropertyOverride>
-      <MonitorPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.NSLookup" Context="Windows.DNS.Zone.Root.Domain.Controllers.Group" ContextInstance="1a7819c2-1ade-eefe-24bd-eb6a83dc06f0" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Zone.NSLookup" Property="Enabled">
+      <MonitorPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.NSLookup" Context="Windows.DNS.Zone.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Zone.Root.Domain.Controllers.Group.GUID" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Zone.NSLookup" Property="Enabled">
         <Value>true</Value>
       </MonitorPropertyOverride>
-      <MonitorPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Forward.NSLookup" Context="Windows.DNS.Forwarder.Conditional.Forward.Root.Domain.Controllers.Group" ContextInstance="31516f6c-e158-259f-9525-b46559698bfd" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Forward.NSLookup" Property="Enabled">
+      <MonitorPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Forward.NSLookup" Context="Windows.DNS.Forwarder.Conditional.Forward.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Conditional.Forward.Group.GUID" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Forward.NSLookup" Property="Enabled">
         <Value>true</Value>
       </MonitorPropertyOverride>
       <MonitorPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.IPAddress.NSLookup" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server.IPAddress" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.IPAddress.NSLookup" Property="Enabled">
         <Value>false</Value>
       </MonitorPropertyOverride>
-      <MonitorPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.IPAddress.NSLookup" Context="Windows.DNS.Server.IP.Address.Root.Domain.Controllers.Group" ContextInstance="bcd9ccfd-e17a-a297-f741-336173e58862" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.IPAddress.NSLookup" Property="Enabled">
+      <MonitorPropertyOverride ID="Override.Group.Microsoft.Windows.DNSServer.2016.IPAddress.NSLookup" Context="Windows.DNS.Server.IP.Address.Root.Domain.Controllers.Group" ContextInstance="Windows.DNS.Server.IPAddress.Group.GUID" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.IPAddress.NSLookup" Property="Enabled">
         <Value>true</Value>
       </MonitorPropertyOverride>
       <MonitorPropertyOverride ID="Override.Microsoft.Windows.DNSServer.2016.Zone.State" Context="MWD2!Microsoft.Windows.DNSServer.2016.Zone" Enforced="false" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Zone.State" Property="Enabled">
@@ -3728,14 +4186,18 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
       <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.404.SocketFailure.Monitor.AlertMessage" />
       <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.408.OpenSocket.Monitor.AlertMessage" />
       <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.3152.FileError.Monitor.AlertMessage" />
-	  <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.4000.OpenFailed.Monitor.AlertMessage" />
+      <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.4000.OpenFailed.Monitor.AlertMessage" />
       <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.4011.IntegratedWriteFailed.Monitor.AlertMessage" />
       <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.4016.LDAPTimeout.Monitor.AlertMessage" />
-	  <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.4019.LoadFailed.Monitor.AlertMessage" />
-	  <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.4521.OperationsFailed.Monitor.AlertMessage" />
-	  <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.7616.TrustAnchorsFailed.Monitor.AlertMessage" />
+      <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.4019.LoadFailed.Monitor.AlertMessage" />
+      <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.4521.OperationsFailed.Monitor.AlertMessage" />
+      <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.7616.TrustAnchorsFailed.Monitor.AlertMessage" />
       <StringResource ID="Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Monitor.AlertMessage" />
       <StringResource ID="Proactive.DNSAlerts.Synthetic.Monitor.AlertMessage" />
+      <StringResource ID="Microsoft.Windows.DNSServer.2016.Event.2502.ScavengingFailed.Monitor.AlertMessage" />
+      <StringResource ID="Proactive.DNSAlerts.Scavenging.Event.2501.Alert.Rule.AlertMessage" />
+      <StringResource ID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.Rule.AlertMessage" />
+      <StringResource ID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Task.Alert.Rule.AlertMessage" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
@@ -3744,6 +4206,9 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
         <DisplayString ElementID="Microsoft.Windows.Server.DNS.Monitoring.Addendum">
           <Name>Microsoft Windows Server 2016 DNS Monitoring Addendum</Name>
           <Description>
+v1.0.4.9  28 Aug 2024 - Updated Close DS/WA with ActiveMonitor.Id, updated summary report for Name,NetbiosComputerName,Parameters fields
+v1.0.4.8  19 Aug 2024 - Added DNS Scavenging Class, RegKey Discovery, Rule, Monitor with updated AlertParameter
+v1.0.4.1   9 Jan 2024 - Removed duplicate disable override for server property
 v1.0.4.0   4 Jan 2024 - Resolution State logic improvements for large environments
 v1.0.3.9  27 Dec 2023 - Whitespace audit, ResolutionState changes, performance changes to DS/WA
 v1.0.3.7  29 Aug 2023 - Updated for generic import, Discovery and Override GUIDs
@@ -3767,20 +4232,26 @@ v1.0.0.3   9 Mar 2021 - Updated property, delivered pack with daily report/task,
 v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         </DisplayString>
         <DisplayString ElementID="Windows.DNS.Root.Domain.Controllers.Group">
-          <Name>Windows DNS - Domain Controllers</Name>
+          <Name>Windows DNS - CONUS Domain Controllers</Name>
           <Description>3 Mar 2022 - Disabling DNS Discovery</Description>
         </DisplayString>
         <DisplayString ElementID="Windows.DNS.Server.IP.Address.Root.Domain.Controllers.Group">
-          <Name>Windows DNS Server IP Address - domain controllers</Name>
+          <Name>Windows DNS Server IP Address - CONUS domain controllers</Name>
           <Description>3 Mar 2022 - Disabling Windows DNS Server IP Address class</Description>
         </DisplayString>
         <DisplayString ElementID="Windows.DNS.Forwarder.Conditional.Forward.Root.Domain.Controllers.Group">
-          <Name>Windows DNS Forwarder Conditional Forward - Domain Controllers</Name>
+          <Name>Windows DNS Forwarder Conditional Forward - CONUS Domain Controllers</Name>
           <Description>3 Mar 2022 - Windows DNS Forwarder Conditional Forward</Description>
         </DisplayString>
         <DisplayString ElementID="Windows.DNS.Zone.Root.Domain.Controllers.Group">
-          <Name>Windows DNS Zone - Domain Controllers</Name>
+          <Name>Windows DNS Zone - CONUS Domain Controllers</Name>
           <Description>18 Mar 2022 - Run nslookup checks on a subset of domain controllers</Description>
+        </DisplayString>
+        <DisplayString ElementID="Windows.DNS.Seed">
+          <Name>Windows DNS Seed Class</Name>
+        </DisplayString>
+        <DisplayString ElementID="Windows.DNS.Seed.Scavenging.Class">
+          <Name>Windows DNS Seed Scavenging Class</Name>
         </DisplayString>
 
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Close.Script.DataSource">
@@ -3789,13 +4260,16 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.DataSource">
           <Name>Proactive DailyTasks DNSAlerts Summary Report and auto-close DataSource</Name>
-          <Description>This datasource generates DNSAlerts summary report and auto-close DataSource</Description>
+          <Description>This datasource generates DNSAlerts Summary Report and auto-close DataSource</Description>
         </DisplayString>
         <DisplayString ElementID="Proactive.DNSAlerts.Synthetic.Monitor.Datasource">
           <Name>Proactive DNS Alerts Synthetic monitor DataSource</Name>
           <Description>This datasource runs PowerShell nslookup script</Description>
         </DisplayString>
-
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.DataSource">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report and auto-close DataSource</Name>
+          <Description>This datasource generates DNSAlerts Scavenging Summary Report and auto-close DataSource</Description>
+        </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.WA">
           <Name>Proactive DailyTasks DNSAlerts report and auto-close on-demand task</Name>
           <Description>This write-action task generates DNSAlerts report and auto-close DataSource</Description>
@@ -3807,6 +4281,10 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         <DisplayString ElementID="Proactive.DNSAlerts.Synthetic.Monitor.WA">
           <Name>Proactive DNS Alerts Synthetic monitor WA</Name>
           <Description>This write-action task runs PowerShell nslookup script</Description>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.WA">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report and auto-close on-demand task</Name>
+          <Description>This write-action task checks for scavenging events summarizing into DNSAlerts summary report and auto-close write action</Description>
         </DisplayString>
 
         <DisplayString ElementID="Proactive.DNS.Repeated.Event.MonitorType">
@@ -3834,6 +4312,9 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         <DisplayString ElementID="Windows.DNS.Zone.Root.Domain.Controllers.Group.DiscoveryRule">
           <Name>Populate Windows DNS Zone - Domain Controllers</Name>
           <Description>This discovery rule populates the group 'Windows DNS Zone - Domain Controllers'</Description>
+        </DisplayString>
+        <DisplayString ElementID="Windows.DNS.Seed.Scavenging.Class.Discovery">
+          <Name>Windows DNS Seed Scavenging Class Discovery</Name>
         </DisplayString>
 
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Report.Script.Alert.Rule">
@@ -3868,6 +4349,20 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Task.Alert.Rule.AlertMessage">
           <Name>Proactive DailyTasks DNSAlerts Summary Report Script Task Rule Alert</Name>
+          <Description>{0}</Description>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.Rule">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Script Rule</Name>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.Rule.AlertMessage">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Alert</Name>
+          <Description>{0}</Description>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Task.Alert.Rule">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Manual Task Rule</Name>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Task.Alert.Rule.AlertMessage">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Script Task Rule Alert</Name>
           <Description>{0}</Description>
         </DisplayString>
         <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.ServiceNotFound.Recovery.Rule">
@@ -3932,6 +4427,19 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.DNS.Service.FoundRunning.Recovery.Rule" SubElementID="DS">
           <Name>DS</Name>
         </DisplayString>
+        <DisplayString ElementID="Proactive.DNSAlerts.Scavenging.Event.2501.Alert.Rule">
+          <Name>Proactive DNSAlerts Scavenging Event 2501 Alert Rule</Name>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DNSAlerts.Scavenging.Event.2501.Alert.Rule" SubElementID="DS">
+          <Name>DS</Name>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DNSAlerts.Scavenging.Event.2501.Alert.Rule" SubElementID="Alert">
+          <Name>Alert</Name>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DNSAlerts.Scavenging.Event.2501.Alert.Rule.AlertMessage">
+          <Name>Proactive DNSAlerts Scavenging Event 2501 Alert</Name>
+          <Description>{0}</Description>
+        </DisplayString>
 
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Report.Script.Task">
           <Name>Proactive DailyTasks DNSAlerts AutoClose Report Script Task</Name>
@@ -3947,7 +4455,7 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         </DisplayString>
 
         <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.ADI.404.SocketFailure.Monitor">
-		  <Name>Windows DNS ADI 404 SocketFailure monitor addendum alert</Name>
+          <Name>Windows DNS ADI 404 SocketFailure monitor addendum alert</Name>
           <Description>Windows DNS ADI 404 SocketFailure monitor to include samples/count</Description>
         </DisplayString>
         <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.ADI.404.SocketFailure.Monitor" SubElementID="TimerEventRaised">
@@ -4114,6 +4622,22 @@ Event Description: {0}</Description>
           <Description>Proactive DNS Alerts Synthetic Monitor
 		  {0}</Description>
         </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.Event.2502.ScavengingFailed.Monitor">
+          <Name>Proactive DNSAlerts Scavenging Event 2502 Scavenging Failed monitor addendum alert</Name>
+          <Description>Proactive DNSAlerts Scavenging Event 2502 Scavenging Failed monitor to include samples/count</Description>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.Event.2502.ScavengingFailed.Monitor" SubElementID="TimerEventRaised">
+          <Name>Good Condition</Name>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.Event.2502.ScavengingFailed.Monitor" SubElementID="RepeatedEventRaised">
+          <Name>Bad Condition</Name>
+        </DisplayString>
+        <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.Event.2502.ScavengingFailed.Monitor.AlertMessage">
+          <Name>Proactive DNSAlerts Scavenging Event 2502 Scavenging Failed monitor addendum alert</Name>
+          <Description>Proactive DNSAlerts Scavenging Event 2502 Scavenging Failed monitor alert 2 alerts in 15 minutes
+Event Description:
+{0}</Description>
+        </DisplayString>
 
         <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Recovery">
           <Name>Proactive Microsoft Windows DNS Server 2016 ADI Interface Error Monitor Recovery</Name>
@@ -4160,190 +4684,188 @@ Event Description: {0}</Description>
           <Name>NotUsed</Name>
           <Description>12 Jan 2022 - Disabling due to customer design</Description>
         </DisplayString>
+
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Server.Property.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Server.Property.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Enabling DNS synthetics for group </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.TrustPoint.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.TrustPoint.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.ClientSubnet.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.ClientSubnet.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.RecursionScope.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.RecursionScope.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Policy.ServerLevel.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Policy.ServerLevel.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.ZoneScope.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.ZoneScope.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.0to10PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.0to10PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.70to80PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.70to80PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.20to30PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.20to30PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.30to40PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.30to40PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.50to60PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.50to60PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.DNSDomain.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.DNSDomain.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.60to70PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.60to70PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.80to90PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.80to90PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.90to100PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.90to100PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.40to50PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.40to50PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.10to20PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.10to20PercentDiscovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.WINS.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.WINS.Discovery">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Forward.NSLookup">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.Zone.NSLookup">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Zone.NSLookup">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Forward.NSLookup">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Microsoft.Windows.DNSServer.2016.IPAddress.NSLookup">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
         <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.IPAddress.NSLookup">
           <Name>NotUsed</Name>
-          <Description>3 Mar 2022 - Disabling DNS synthetics from 54</Description>
+          <Description>3 Mar 2022 - Disabling DNS synthetics </Description>
         </DisplayString>
-        <DisplayString ElementID="Override.Disable.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery">
+        <DisplayString ElementID="Override.Group.Microsoft.Windows.DNSServer.2016.Forwarder.Conditional.Discovery">
           <Name>NotUsed</Name>
           <Description>10 Nov 2022 - Enabling Group for Override</Description>
         </DisplayString>
-        <DisplayString ElementID="Override.Disable.Microsoft.Windows.DNSServer.2016.Server.Property.Discovery">
-          <Name>NotUsed</Name>
-          <Description>10 Nov 2022 - Enabling group discovery</Description>
-        </DisplayString>
+
         <DisplayString ElementID="Override.Severity.Microsoft.Windows.DNSServer.2016.ADI.OpenFailed">
           <Name>NotUsed</Name>
           <Description>5 Jan 2023 - Changed Severity to warning</Description>
