@@ -1,4 +1,4 @@
-# DNSAddendumAgnostic - Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.4.0
+# DNSAddendumAgnostic - Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.5.7
 
 Download [here](https://github.com/theKevinJustin/DNSAddendumAgnostic/blob/main/Microsoft.Windows.Server.DNS.Monitoring.Addendum.xml)
 
