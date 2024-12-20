@@ -14,6 +14,13 @@ Blog [https://kevinjustin.com/blog/2023/08/23/dns-addendum-pack/](https://kevinj
 
 # Version History:
 ```
+v1.0.5.7  19 Dec 2024 - Updated AlertMessage DisplayStrings for reports
+v1.0.5.6  23 Sep 2024 - New Scavenging close workflow DS/WA, task, alert rules, updated summary report remaining alerts
+v1.0.5.2  10 Sep 2024 - Updated Scavenging task rule to field zero, Scavenging report task WA to include message
+v1.0.5.0   9 Sep 2024 - Updated Scavenging rule AlertMessage fields, Scavenging report task, report DS/WA updated to remove summaries
+v1.0.4.9  28 Aug 2024 - Updated Close DS/WA with ActiveMonitor.Id, updated summary report for Name,NetbiosComputerName,Parameters fields
+v1.0.4.8  19 Aug 2024 - Added DNS Scavenging Class, RegKey Discovery, Rule, Monitor with updated AlertParameter
+v1.0.4.1   9 Jan 2024 - Removed duplicate disable override for server property
 v1.0.4.0   4 Jan 2024 - Resolution State logic improvements for large environments
 v1.0.3.9  27 Dec 2023 - Whitespace audit, ResolutionState changes, performance changes to DS/WA
 v1.0.3.7  29 Aug 2023 - Updated for generic import, Discovery and Override GUIDs
