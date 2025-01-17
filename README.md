@@ -1,4 +1,4 @@
-# DNSAddendumAgnostic - Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.5.7
+# DNSAddendumAgnostic - Microsoft.Windows.Server.DNS.Monitoring.Addendum v1.0.5.8
 
 Download [here](https://github.com/theKevinJustin/DNSAddendumAgnostic/blob/main/Microsoft.Windows.Server.DNS.Monitoring.Addendum.xml)
 
@@ -14,6 +14,7 @@ Blog [https://kevinjustin.com/blog/2023/08/23/dns-addendum-pack/](https://kevinj
 
 # Version History:
 ```
+v1.0.5.8  17 Jan 2025 - Disabled two rules - ADI Security failed and RPC Initialize
 v1.0.5.7  19 Dec 2024 - Updated AlertMessage DisplayStrings for reports
 v1.0.5.6  23 Sep 2024 - New Scavenging close workflow DS/WA, task, alert rules, updated summary report remaining alerts
 v1.0.5.2  10 Sep 2024 - Updated Scavenging task rule to field zero, Scavenging report task WA to include message
