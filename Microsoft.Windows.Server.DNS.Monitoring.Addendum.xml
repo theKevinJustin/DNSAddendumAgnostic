@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?><ManagementPack ContentReadable="true" SchemaVersion="2.0" OriginalSchemaVersion="1.1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+﻿<?xml version="1.0" encoding="utf-8"?><ManagementPack ContentReadable="true" SchemaVersion="2.0" OriginalSchemaVersion="1.1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <Manifest>
     <Identity>
       <ID>Microsoft.Windows.Server.DNS.Monitoring.Addendum</ID>
-      <Version>1.0.5.7</Version>
+      <Version>1.0.5.8</Version>
     </Identity>
     <Name>Microsoft Windows Server 2016 DNS Monitoring Addendum</Name>
     <References>
@@ -87,7 +87,7 @@
                 </Scheduler>
               </DataSource>
               <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -101,7 +101,7 @@
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1057.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1058.ps1"
 $EventID = "546"
 #=================================================================================
 
@@ -186,10 +186,6 @@ $DNSAMessage= @()
 
 if ($SCOMOpenReportAlerts.Count -gt 0 )
 	{
-	$Message = "DNS Monitors auto-closed for ($date)"
-
-	$DNSAMessage += ""
-	$DNSAMessage += $Message	
 	$DNSAMessage += ""
 	$DNSAMessage += "Alert Count = $($SCOMOpenReportAlerts.Count)"
 	$DNSAMessage += ""
@@ -221,6 +217,7 @@ $DNSAMessage = $DNSAMessage | out-string
 #============================================================
 
   $Result = "GOOD"
+  $Message = "DNS Monitors auto-closed for ($date)"
 
   $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Monitors auto-closed for ($date). `n `n$DNSAMessage")
 
@@ -373,7 +370,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed. `n Sc
                 </Scheduler>
               </DataSource>
               <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.DataSource.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.DataSource.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -387,7 +384,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed. `n Sc
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.DataSource.v1057.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.DataSource.v1058.ps1"
 $EventID = "548"
 #=================================================================================
 
@@ -702,7 +699,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Report Script Completed. `n S
                 </Scheduler>
               </DataSource>
               <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-                <ScriptName>Proactive.DNSAlerts.Synthetic.Monitor.Datasource.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DNSAlerts.Synthetic.Monitor.Datasource.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Proactive DNS Synthetic internal/external PowerShell script
@@ -719,14 +716,14 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Report Script Completed. `n S
 $ComputerName = $env:ComputerName
 
 $ExternalDNS = "google.com"
-$InternalDNS = "##testlab.net##"
+$InternalDNS = "ds.army.mil"
 #=================================================================================
 
 
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging.
-$ScriptName = "Proactive.DNSAlerts.Synthetic.Monitor.Datasource.v1057.ps1"
+$ScriptName = "Proactive.DNSAlerts.Synthetic.Monitor.Datasource.v1058.ps1"
 $EventID = "548"
 #=================================================================================
 
@@ -858,7 +855,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
                 </Scheduler>
               </DataSource>
               <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.DataSource.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.DataSource.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS Scavenging alerts report
@@ -872,7 +869,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.DataSource.v1057.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.DataSource.v1058.ps1"
 $EventID = "548"
 #=================================================================================
 
@@ -924,7 +921,7 @@ if ( $DNSAlerts.Count -eq 0 )
 if ( $DNSAlerts.Count -gt 0 )
 	{
 	$DNSMessage += ""
-
+	
 	# Show DNS alerts by Time Raised,NetBiosComputerName,Message
 	#
 	$DNSMessage += "# DNS Scavenging Alerts for $($date)"
@@ -980,10 +977,10 @@ $DNSMessage = $DNSMessage | out-string
 #============================================================
 
 
-  $Result = "GOOD"
-  $Message = "DNS Scavenging alerts report for ($date)"
+$Result = "GOOD"
+$Message = "DNS Scavenging alerts report for ($date)"
 
-  $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging Summary Report completed for ($date). `n `n$DNSMessage")
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging Summary Report completed for ($date). `n `n$DNSMessage")
 
 #$bag.AddValue('Result',$Result)
 $bag.AddValue('Count',$Test)
@@ -1044,7 +1041,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging Report Script Comp
                 </Scheduler>
               </DataSource>
               <ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.DataSource.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.DataSource.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS Scavenging close report
@@ -1058,7 +1055,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging Report Script Comp
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.DataSource.v1057.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.DataSource.v1058.ps1"
 $EventID = "548"
 #=================================================================================
 
@@ -1140,7 +1137,6 @@ if ($SCOMOpenReportAlerts.Count -eq 0 )
 
 if ($SCOMOpenReportAlerts.Count -gt 0 )
 	{
-	$DNSMessage += "DNS Scavenging alerts for ($date)"
 	$DNSMessage += ""
 	$DNSMessage += "Alert Count = $($SCOMOpenReportAlerts.Count)"
 	$DNSMessage += ""
@@ -1225,7 +1221,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed.  Scri
           <Composite>
             <MemberModules>
               <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.WA.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.WA.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -1239,7 +1235,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed.  Scri
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1057.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Close.Script.Datasource.v1058.ps1"
 $EventID = "547"
 #=================================================================================
 
@@ -1311,61 +1307,58 @@ $ClosedDNSAlerts = Get-SCOMAlert -ResolutionState 255 | ? { ($_.Name -in $SCOMCo
 $ClosedDNSAlerts.Count
 
 
+$DNSMessage= @()
+
 #
 # Build report
 if ($SCOMOpenReportAlerts.Count -eq 0 )
 	{
 	$Message = "ZERO DNS 2016+ alerts for ($date)"
-	$DNSAMessage = "ZERO DNS 2016+ alerts for ($date)"
+	$DNSMessage = "ZERO DNS 2016+ alerts for ($date)"
 	$momapi.LogScriptEvent($ScriptName,$EventID,0,"$Message")
 	}
-	
-$DNSAMessage= @()
 
 if ($SCOMOpenReportAlerts.Count -gt 0 )
 	{
-	$Message = "DNS Monitors auto-closed for ($date)"
-
-	$DNSAMessage += ""
-	$DNSAMessage += $Message	
-	$DNSAMessage += ""
-	$DNSAMessage += "Alert Count = $($SCOMOpenReportAlerts.Count)"
-	$DNSAMessage += ""
-	$DNSAMessage += "# DNS Monitors auto-closed"
-	$DNSAMessage += "#=========================================================="
-	$DNSAMessage += "# Number of historical DNS alerts = $($SCOMCoreReportAlerts.Count)"
-	$DNSAMessage += "# Number of OPEN DNS alert monitors AND rules = $($SCOMOpenReportAlerts.Count)"
-	$DNSAMessage += "#=========================================================="
-	$DNSAMessage += ""
-	$DNSAMessage += "#==============================================="
-	$DNSAMessage += "# Monitors AND Rules that were auto closed = $($AutoClosed)"
-	$DNSAMessage += "#==============================================="
-	$DNSAMessage += ""
-	#$DNSAMessage += "#================================================"
-	#$DNSAMessage += "# List of included Monitor/Rule names auto-closed"
-	#$DNSAMessage += "#================================================"
-	#$DNSAMessage += "# Monitors"
-	#$DNSAMessage += $DNSMonitorsToAutoClose | out-string
-	#$DNSAMessage += "# Rules"
-	#$DNSAMessage += $DNSRulesToAutoClose | out-string
-	#$DNSAMessage += "#============================================================"
-	#$DNSAMessage += ""
+	$DNSMessage += ""
+	$DNSMessage += "Alert Count = $($SCOMOpenReportAlerts.Count)"
+	$DNSMessage += ""
+	$DNSMessage += "# DNS Monitors auto-closed"
+	$DNSMessage += "#=========================================================="
+	$DNSMessage += "# Number of historical DNS alerts = $($SCOMCoreReportAlerts.Count)"
+	$DNSMessage += "# Number of OPEN DNS alert monitors AND rules = $($SCOMOpenReportAlerts.Count)"
+	$DNSMessage += "#=========================================================="
+	$DNSMessage += ""
+	$DNSMessage += "#==============================================="
+	$DNSMessage += "# Monitors AND Rules that were auto closed = $($AutoClosed)"
+	$DNSMessage += "#==============================================="
+	$DNSMessage += ""
+	#$DNSMessage += "#================================================"
+	#$DNSMessage += "# List of included Monitor/Rule names auto-closed"
+	#$DNSMessage += "#================================================"
+	#$DNSMessage += "# Monitors"
+	#$DNSMessage += $DNSMonitorsToAutoClose | out-string
+	#$DNSMessage += "# Rules"
+	#$DNSMessage += $DNSRulesToAutoClose | out-string
+	#$DNSMessage += "#============================================================"
+	#$DNSMessage += ""
 	}
 
-$DNSAMessage
+$DNSMessage
 
-$DNSAMessage = $DNSAMessage | out-string
+$DNSMessage = $DNSMessage | out-string
 
 #============================================================
 
   $Result = "GOOD"
+  $Message = "DNS Monitors auto-closed for ($date)"
 
-  $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Monitors auto-closed for ($date). `n `n$DNSAMessage")
+  $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Monitors auto-closed for ($date). `n `n$DNSMessage")
 
 #$bag.AddValue('Result',$Result)
 $bag.AddValue('Count',$Test)
 $bag.AddValue('Message',$Message)
-$bag.AddValue('Summary',$DNSAMessage)
+$bag.AddValue('Summary',$DNSMessage)
 
 # Return all bags
 $bag
@@ -1496,7 +1489,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed. `n Sc
           <Composite>
             <MemberModules>
               <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.WA.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.WA.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -1510,7 +1503,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed. `n Sc
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.WA.v1057.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.WA.v1058.ps1"
 $EventID = "549"
 #=================================================================================
 
@@ -1795,7 +1788,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Report Script Completed. `n S
           <Composite>
             <MemberModules>
               <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-                <ScriptName>Proactive.DNSAlerts.Synthetic.Monitor.WA.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DNSAlerts.Synthetic.Monitor.WA.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Proactive DNS Synthetic internal/external PowerShell script
@@ -1812,14 +1805,14 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Report Script Completed. `n S
 $ComputerName = $env:ComputerName
 
 $ExternalDNS = "google.com"
-$InternalDNS = "##testlab.net##"
+$InternalDNS = "ds.army.mil"
 #=================================================================================
 
 
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging.
-$ScriptName = "Proactive.DNSAlerts.Synthetic.Monitor.WA.v1057.ps1"
+$ScriptName = "Proactive.DNSAlerts.Synthetic.Monitor.WA.v1058.ps1"
 $EventID = "548"
 #=================================================================================
 
@@ -1936,7 +1929,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
           <Composite>
             <MemberModules>
               <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.WA.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.WA.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS alerts and close via on demand task
@@ -1950,7 +1943,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Synthetic Script Completed. `
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.WA.v1057.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.WA.v1058.ps1"
 $EventID = "549"
 #=================================================================================
 
@@ -2107,7 +2100,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging Report Script Comp
           <Composite>
             <MemberModules>
               <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.WA.v1057.ps1</ScriptName>
+                <ScriptName>Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.WA.v1058.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Script to gather DNS scavenging alerts and close via on demand task
@@ -2121,7 +2114,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Scavenging Report Script Comp
 #=================================================================================
 # Assign script name variable for use in event logging.
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.WA.v1057.ps1"
+$ScriptName = "Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.WA.v1058.ps1"
 $EventID = "549"
 #=================================================================================
 
@@ -2203,7 +2196,6 @@ if ($SCOMOpenReportAlerts.Count -eq 0 )
 
 if ($SCOMOpenReportAlerts.Count -gt 0 )
 	{
-	$DNSMessage += "DNS Scavenging alerts for ($date)"
 	$DNSMessage += ""
 	$DNSMessage += "Alert Count = $($SCOMOpenReportAlerts.Count)"
 	$DNSMessage += ""
@@ -2749,7 +2741,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed.  Scri
       </Discovery>
     </Discoveries>
     <Rules>
-      <Rule ID="Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.Rule" Enabled="true" Target="SC!Microsoft.SystemCenter.AllManagementServersPool" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+      <Rule ID="Proactive.DailyTasks.DNSAlerts.Report.Script.Alert.Rule" Enabled="true" Target="SC!Microsoft.SystemCenter.AllManagementServersPool" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Alert</Category>
         <DataSources>
           <DataSource ID="DS" TypeID="Proactive.DailyTasks.DNSAlerts.Close.Script.DataSource">
@@ -2760,7 +2752,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed.  Scri
           <WriteAction ID="WA" TypeID="Health!System.Health.GenerateAlert">
             <Priority>1</Priority>
             <Severity>0</Severity>
-            <AlertMessageId>$MPElement[Name="Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.Rule.AlertMessage"]$</AlertMessageId>
+            <AlertMessageId>$MPElement[Name="Proactive.DailyTasks.DNSAlerts.Report.Script.Alert.Rule.AlertMessage"]$</AlertMessageId>
             <AlertParameters>
               <AlertParameter1>$Data/Property[@Name='Count']$</AlertParameter1>
               <AlertParameter2>$Data/Property[@Name='Message']$</AlertParameter2>
@@ -3620,29 +3612,6 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed.  Scri
           </WriteAction>
         </WriteActions>
       </Rule>
-      <Rule ID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.Rule" Enabled="true" Target="SC!Microsoft.SystemCenter.AllManagementServersPool" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
-        <Category>Alert</Category>
-        <DataSources>
-          <DataSource ID="DS" TypeID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.DataSource">
-            <TimeoutSeconds>600</TimeoutSeconds>
-          </DataSource>
-        </DataSources>
-        <WriteActions>
-          <WriteAction ID="WA" TypeID="Health!System.Health.GenerateAlert">
-            <Priority>1</Priority>
-            <Severity>0</Severity>
-            <AlertMessageId>$MPElement[Name="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.Rule.AlertMessage"]$</AlertMessageId>
-            <AlertParameters>
-              <AlertParameter1>$Data/Property[@Name='Count']$</AlertParameter1>
-              <AlertParameter2>$Data/Property[@Name='Message']$</AlertParameter2>
-              <AlertParameter3>$Data/Property[@Name='Summary']$</AlertParameter3>
-            </AlertParameters>
-            <Suppression>
-              <SuppressionValue>$Data/Property[@Name='Message']$</SuppressionValue>
-            </Suppression>
-          </WriteAction>
-        </WriteActions>
-      </Rule>
       <Rule ID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Task.Alert.Rule" Enabled="true" Target="SC!Microsoft.SystemCenter.AllManagementServersPool" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Alert</Category>
         <DataSources>
@@ -4243,7 +4212,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed.  Scri
       <Recovery ID="Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Recovery" Accessibility="Public" Enabled="true" Target="MWD2!Microsoft.Windows.DNSServer.2016.Server" Monitor="Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor" ResetMonitor="true" ExecuteOnState="Warning" Remotable="true" Timeout="300">
         <Category>Custom</Category>
         <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-          <ScriptName>Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Recovery.v1057.ps1</ScriptName>
+          <ScriptName>Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Recovery.v1058.ps1</ScriptName>
           <ScriptBody>
 #=================================================================================
 #  Script to restart a service
@@ -4264,7 +4233,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"DNS Close Script Completed.  Scri
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging
-$ScriptName = "Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Recovery.v1057.ps1"
+$ScriptName = "Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.Service.Recovery.v1058.ps1"
 $EventID = "3750"
 #=================================================================================
 
@@ -4385,7 +4354,7 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
       <Recovery ID="Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery" Accessibility="Public" Enabled="true" Target="MWD2!Microsoft.Windows.DNSServer.2016.Server" Monitor="MWD2!Microsoft.Windows.DNSServer.2016.Service.Running" ResetMonitor="true" ExecuteOnState="Error" Remotable="true" Timeout="300">
         <Category>Custom</Category>
         <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-          <ScriptName>Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery.v1057.ps1</ScriptName>
+          <ScriptName>Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery.v1058.ps1</ScriptName>
           <ScriptBody>
 #=================================================================================
 #  Script to restart a service
@@ -4406,7 +4375,7 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging
-$ScriptName = "Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery.v1057.ps1"
+$ScriptName = "Microsoft.Windows.DNSServer.2016.DNS.Service.Recovery.v1058.ps1"
 $EventID = "3750"
 #=================================================================================
 
@@ -4757,11 +4726,17 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
       <RulePropertyOverride ID="Override.Disable.Microsoft.Windows.DNSServer.2016.Service.FileError" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Rule="MWD2!Microsoft.Windows.DNSServer.2016.Service.FileError" Property="Enabled">
         <Value>false</Value>
       </RulePropertyOverride>
+      <RulePropertyOverride ID="Override.Disable.Microsoft.Windows.DNSServer.2016.ADI.SecurityInterfaceFailed" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Rule="MWD2!Microsoft.Windows.DNSServer.2016.ADI.SecurityInterfaceFailed" Property="Enabled">
+        <Value>false</Value>
+      </RulePropertyOverride>
+      <RulePropertyOverride ID="Override.Disable.Microsoft.Windows.DNSServer.2016.RPC.Initialize.Failed" Context="MWD2!Microsoft.Windows.DNSServer.2016.Server" Enforced="false" Rule="MWD2!Microsoft.Windows.DNSServer.2016.RPC.Initialize.Failed" Property="Enabled">
+        <Value>false</Value>
+      </RulePropertyOverride>
     </Overrides>
   </Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.Rule.AlertMessage" />
+      <StringResource ID="Proactive.DailyTasks.DNSAlerts.Report.Script.Alert.Rule.AlertMessage" />
       <StringResource ID="Proactive.DailyTasks.DNSAlerts.Report.Script.Task.Rule.AlertMessage" />
       <StringResource ID="Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.Rule.AlertMessage" />
       <StringResource ID="Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Task.Alert.Rule.AlertMessage" />
@@ -4790,7 +4765,6 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
       <StringResource ID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.Rule.AlertMessage" />
       <StringResource ID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Task.Alert.Rule.AlertMessage" />
       <StringResource ID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Task.Alert.Rule.AlertMessage" />
-      <StringResource ID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.Rule.AlertMessage" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
@@ -4799,7 +4773,8 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
         <DisplayString ElementID="Microsoft.Windows.Server.DNS.Monitoring.Addendum">
           <Name>Microsoft Windows Server 2016 DNS Monitoring Addendum</Name>
           <Description>
-v1.0.5.7  19 Dec 2024 - Updated AlertMessage DisplayStrings for reports
+v1.0.5.8  17 Jan 2025 - Disabled two rules - ADI Security failed and RPC Initialize
+v1.0.5.7  30 Sep 2024 - Updated Scavenging alert rules
 v1.0.5.6  23 Sep 2024 - New Scavenging close workflow DS/WA, task, alert rules, updated summary report remaining alerts
 v1.0.5.2  10 Sep 2024 - Updated Scavenging task rule to field zero, Scavenging report task WA to include message
 v1.0.5.0   9 Sep 2024 - Updated Scavenging rule AlertMessage fields, Scavenging report task, report DS/WA updated to remove summaries
@@ -4819,7 +4794,7 @@ v1.0.2.9   5 Jan 2023 - ADI and DNS Server logging alerts set to warning
 v1.0.2.7  15 Jul 2022 - MonitorTypes, Recovery Automation
 v1.0.2.2  14 Jun 2022 - Updated run times
 v1.0.1.5  18 Mar 2022 - Updated overrides to disable except for root DNS servers, additional logic
-v1.0.1.4   8 Dec 2021 - Updated Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.Rule to 1200
+v1.0.1.4   8 Dec 2021 - Updated Proactive.DailyTasks.DNSAlerts.Report.Script.Alert.Rule to 1200
 v1.0.0.11 18 Mar 2021 - Updated Tasks, script versions
 v1.0.1.1  11 May 2021 - Updated Report datasource, moving report to front, updated monitors/alerts
 v1.0.0.13 26 Mar 2021 - Added 'Windows DNS - Active Directory Integrated Write Failed' to autoclose rules
@@ -4867,7 +4842,6 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
           <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report and auto-close DataSource</Name>
           <Description>This datasource generates DNSAlerts Scavenging Summary Report and auto-close DataSource</Description>
         </DisplayString>
-
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.WA">
           <Name>Proactive DailyTasks DNSAlerts report and auto-close on-demand task</Name>
           <Description>This write-action task generates DNSAlerts report and auto-close DataSource</Description>
@@ -4919,13 +4893,15 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
           <Name>Windows DNS Seed Scavenging Class Discovery</Name>
         </DisplayString>
 
-        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.Rule">
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Report.Script.Alert.Rule">
           <Name>Proactive DailyTasks DNSAlerts Report Script Alert Rule</Name>
           <Description>Proactive Scheduled rule to kick off datasource at 0615 M-F</Description>
         </DisplayString>
-        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Close.Script.Alert.Rule.AlertMessage">
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Report.Script.Alert.Rule.AlertMessage">
           <Name>Proactive DailyTasks DNSAlerts Report Script Alert Rule</Name>
-          <Description>{2}</Description>
+          <Description>{1}
+
+{2}</Description>
         </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.Rule">
           <Name>Proactive DailyTasks DNSAlerts Summary Report Script Alert Rule</Name>
@@ -4933,7 +4909,9 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Alert.Rule.AlertMessage">
           <Name>Proactive DailyTasks DNSAlerts Summary Report Script Alert Rule</Name>
-          <Description>{2}</Description>
+          <Description>{1}
+
+{2}</Description>
         </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Report.Script.Task.Alert.Rule">
           <Name>Proactive DailyTasks DNSAlerts task Report Manual Task Rule</Name>
@@ -4947,20 +4925,6 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
         </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.SummaryReport.Script.Task.Alert.Rule.AlertMessage">
           <Name>Proactive DailyTasks DNSAlerts Summary Report Script Task Rule Alert</Name>
-          <Description>{0}</Description>
-        </DisplayString>
-        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.Rule">
-          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Script Rule</Name>
-        </DisplayString>
-        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.Rule.AlertMessage">
-          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Alert</Name>
-          <Description>{2}</Description>
-        </DisplayString>
-        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Task.Alert.Rule">
-          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Manual Task Rule</Name>
-        </DisplayString>
-        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Task.Alert.Rule.AlertMessage">
-          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Script Task Rule Alert</Name>
           <Description>{0}</Description>
         </DisplayString>
         <DisplayString ElementID="Microsoft.Windows.DNSServer.2016.ADI.InterfaceError.Monitor.ServiceNotFound.Recovery.Rule">
@@ -5038,15 +5002,22 @@ v1.0.0.0   8 Feb 2021 - Created for DNS server alert tuning</Description>
           <Name>Proactive DNSAlerts Scavenging Event 2501 Alert</Name>
           <Description>{0}</Description>
         </DisplayString>
-        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.Rule">
-          <Name>Proactive DNSAlerts Scavenging Close Alert Rule</Name>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.Rule">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Script Rule</Name>
         </DisplayString>
-        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Alert.Rule.AlertMessage">
-          <Name>Proactive DNSAlerts Scavenging Close Alert Rule</Name>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Alert.Rule.AlertMessage">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Alert</Name>
+          <Description>{2}</Description>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Task.Alert.Rule">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Manual Task Rule</Name>
+        </DisplayString>
+        <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.SummaryReport.Script.Task.Alert.Rule.AlertMessage">
+          <Name>Proactive DailyTasks DNSAlerts Scavenging Summary Report Script Task Rule Alert</Name>
           <Description>{0}</Description>
         </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Task.Alert.Rule">
-          <Name>Proactive DNSAlerts Scavenging Close Task Alert</Name>
+          <Name>Proactive DNSAlerts Scavenging Close Alert Rule</Name>
         </DisplayString>
         <DisplayString ElementID="Proactive.DailyTasks.DNSAlerts.Scavenging.Close.Script.Task.Alert.Rule.AlertMessage">
           <Name>Proactive DNSAlerts Scavenging Close Task Alert</Name>
@@ -5563,6 +5534,14 @@ Event Description:
         <DisplayString ElementID="Override.Disable.Microsoft.Windows.DNSServer.2016.Service.FileError">
           <Name>NotUsed</Name>
           <Description>27 June 2023 - Disabled due to added count logic monitor</Description>
+        </DisplayString>
+        <DisplayString ElementID="Override.Disable.Microsoft.Windows.DNSServer.2016.ADI.SecurityInterfaceFailed">
+          <Name>NotUsed</Name>
+          <Description>17 Jan 2025 - Disabled per domain admin with other health monitors.  DNS restarts last after reboot.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Override.Disable.Microsoft.Windows.DNSServer.2016.RPC.Initialize.Failed">
+          <Name>NotUsed</Name>
+          <Description>17 Jan 2025 - Disabled per domain admin with other health monitors.  DNS restarts last after reboot.</Description>
         </DisplayString>
       </DisplayStrings>
     </LanguagePack>
